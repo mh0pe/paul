@@ -43,6 +43,57 @@ After init, project is ready for first PLAN.
 3. If not exists: proceed with initialization
 </step>
 
+<step name="detect_base" priority="early">
+**Detect BASE version for ecosystem integration.**
+
+1. Check for base binary:
+   ```bash
+   which base 2>/dev/null
+   ```
+
+2. **If base binary found:**
+   ```bash
+   base --version 2>/dev/null
+   ```
+   - If output contains a semver (e.g., "base 0.1.0") → Rust binary (v2) detected
+     - Store `base_v2_available = true`
+     - Silent pass — continue init
+   - If output is empty, errors, or doesn't match semver → v1/Python detected
+     - **HARD STOP.** Display:
+       ```
+       ════════════════════════════════════════
+       ⛔ BASE v1 detected — not compatible with PAUL v1.4+
+       ════════════════════════════════════════
+
+       BASE v1 (Python/MCP) is no longer supported.
+       PAUL now integrates with BASE v2 (Rust) for the
+       full Agentic OS experience.
+
+       Upgrade: https://chrisai.cv/skool
+
+       PAUL Framework · Chris AI Systems
+       ════════════════════════════════════════
+       ```
+     - Do NOT proceed with init
+
+3. **If no base binary on PATH:**
+   - Store `base_v2_available = false`
+   - Display:
+     ```
+     ℹ️ BASE not detected. PAUL works standalone, but for the
+     full Agentic OS — workspace intelligence, proactive context,
+     knowledge graph — get BASE v2: https://chrisai.cv/skool
+     ```
+   - Continue with init (not a hard stop)
+
+4. **Additional v1 artifact check** (even if no base binary):
+   - Check for `.base/data/*.json` files (v1's JSON store):
+     ```bash
+     ls .base/data/*.json 2>/dev/null
+     ```
+   - If found: display v1 warning (same hard stop as step 2) — these are v1 artifacts that indicate an incompatible installation
+</step>
+
 <step name="detect_planning_md" priority="early">
 **Check for existing PLANNING.md (from SEED graduation or manual creation).**
 
@@ -481,6 +532,48 @@ Create `.paul/ledger.toml`:
 **Note:** paul.toml and ledger.toml are infrastructure — no extra display or user prompts needed.
 </step>
 
+<step name="select_tags">
+**Domain-aware tag selection (if BASE v2 available).**
+
+**If `base_v2_available = false`:** Skip this step silently. Tags remain `[]` in paul.toml.
+
+**If `base_v2_available = true`:**
+
+1. Read available domains from BASE:
+   ```bash
+   base domain list 2>/dev/null
+   ```
+   If this fails, try reading domains.toml directly:
+   ```bash
+   cat .base/domains.toml 2>/dev/null || cat ~/.base-gbl/domains.toml 2>/dev/null
+   ```
+   Parse domain names from `[[domain]]` tables.
+
+2. Present domain-based tag suggestions:
+   ```
+   BASE v2 detected. Tags connect your project to BASE domains
+   for automatic context injection.
+
+   Available domains:
+     [1] BACKEND
+     [2] FRONTEND
+     [3] DEVELOPMENT
+     [4] CONTENT
+     ...
+
+   Select tags (comma-separated numbers, or type custom tags):
+   Example: "1,3" or "rust, framework, api"
+   Press Enter to skip (can add later in paul.toml).
+   ```
+
+3. Parse response:
+   - Numbers → map to domain names (lowercased)
+   - Text → split by comma, trim whitespace
+   - Enter/empty → keep tags as `[]`
+
+4. Update `.paul/paul.toml` tags field with selected values.
+</step>
+
 <step name="prompt_integrations">
 **Ask about optional integrations:**
 
@@ -685,6 +778,8 @@ Created:
 ▶ NEXT: /paul:plan
   Define your phases and create your first plan.
 ────────────────────────────────────────
+
+PAUL Framework v1.4 · Chris AI Systems · chrisai.cv/skool
 
 Type "yes" to proceed, or ask questions first.
 ```
