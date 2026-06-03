@@ -240,9 +240,15 @@ Wait for user response.
 <step name="create_project_md">
 **Generate PROJECT.md populated from walkthrough data — instead of skeleton placeholders, because plans built against real requirements produce better output.**
 
-Create `.paul/PROJECT.md`:
+Create `.paul/PROJECT.md` with index-compatible frontmatter:
 
 ```markdown
+---
+description: "[core_value one-liner from walkthrough]"
+type: Project
+about: "[project_name]"
+---
+
 # [project_name]
 
 ## What This Is
@@ -325,9 +331,15 @@ None yet.
 </step>
 
 <step name="create_roadmap_md">
-Create `.paul/ROADMAP.md`:
+Create `.paul/ROADMAP.md` with index-compatible frontmatter:
 
 ```markdown
+---
+description: "[project_name] — milestone and phase structure"
+type: Roadmap
+about: "[project_name]"
+---
+
 # Roadmap: [project_name]
 
 ## Overview
@@ -356,9 +368,15 @@ Note: Phase details are populated during planning, not init.
 </step>
 
 <step name="create_state_md">
-Create `.paul/STATE.md`:
+Create `.paul/STATE.md` with index-compatible frontmatter:
 
 ```markdown
+---
+description: "[project_name] — current position and accumulated context"
+type: ProjectState
+about: "[project_name]"
+---
+
 # Project State
 
 ## Project Reference
@@ -415,9 +433,12 @@ Resume file: .paul/PROJECT.md
 
 Reference: @src/templates/paul-json.md
 
+Generate a satellite ID: `sat_` + 8 random hex characters (from UUID4, e.g., `sat_3f8a1c2e`). This ID is permanent — it survives moves, renames, and folder restructures. BASE satellite detection uses it as the primary key.
+
 Create `.paul/paul.json`:
 ```json
 {
+  "id": "[generated sat_xxxxxxxx]",
   "name": "[project_name]",
   "version": "0.0.0",
   "milestone": {

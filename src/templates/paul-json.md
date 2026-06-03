@@ -1,4 +1,16 @@
-# paul.json Template
+> ⚠️ **DEPRECATED as of v1.4 (Agentic OS Integration)**
+>
+> **Replacement:** `paul.toml` — see `src/templates/paul-toml.md`
+>
+> paul.json is replaced by paul.toml for BASE-v2 graph integration. Existing paul.json files
+> will be auto-migrated to paul.toml by any PAUL workflow that touches them. This template is
+> preserved for reference during the migration period and will be removed in a future version.
+>
+> **PAUL Framework · Chris AI Systems · chrisai.cv/skool**
+
+---
+
+# paul.json Template (DEPRECATED)
 
 Template for `.paul/paul.json` - machine-readable satellite manifest for external system discovery.
 
@@ -10,6 +22,7 @@ Template for `.paul/paul.json` - machine-readable satellite manifest for externa
 
 ```json
 {
+  "id": "sat_{8_hex_chars}",
   "name": "{project_name}",
   "version": "{milestone_version}",
   "milestone": {
@@ -42,6 +55,7 @@ Template for `.paul/paul.json` - machine-readable satellite manifest for externa
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `id` | string | Stable satellite identity (format: `sat_` + 8 hex chars from UUID4). Generated once at creation — never changes. Survives moves, renames, folder restructures. Used by BASE satellite detection as primary key. |
 | `name` | string | Project name (from init or directory name) |
 | `version` | string | Current milestone version (e.g., "0.1.0") |
 | `milestone.name` | string | Current milestone name (e.g., "v0.1 Initial Release") |
@@ -62,7 +76,7 @@ Template for `.paul/paul.json` - machine-readable satellite manifest for externa
 
 | Workflow | Fields Updated |
 |----------|---------------|
-| `init-project` | All fields (initial creation) |
+| `init-project` | All fields (initial creation, generates `id`) |
 | `plan-phase` | `loop.plan`, `loop.position` → "PLAN", `timestamps.updated_at` |
 | `apply-phase` | `loop.position` → "APPLY", `timestamps.updated_at` |
 | `unify-phase` | `phase.*`, `loop.position` → "IDLE", `loop.plan` → null, `timestamps.updated_at` |
@@ -71,12 +85,15 @@ Template for `.paul/paul.json` - machine-readable satellite manifest for externa
 
 **Note:** Not all workflows currently implement sync. v1.1 implements sync in: init-project, unify-phase, create-milestone, complete-milestone. Plan-phase and apply-phase sync are deferred (unify catches up).
 
+**Immutable field:** `id` is NEVER updated by any workflow. It is set once during init or register-manifest and preserved through all read-modify-write cycles.
+
 ---
 
 ## Example: Newly Initialized Project
 
 ```json
 {
+  "id": "sat_3f8a1c2e",
   "name": "my-app",
   "version": "0.0.0",
   "milestone": {
@@ -107,6 +124,7 @@ Template for `.paul/paul.json` - machine-readable satellite manifest for externa
 
 ```json
 {
+  "id": "sat_7f3e9a2b",
   "name": "casegate",
   "version": "0.2.0",
   "milestone": {
@@ -139,7 +157,8 @@ Template for `.paul/paul.json` - machine-readable satellite manifest for externa
 
 - **Machine-readable only.** paul.json is for external systems, not humans. Humans read STATE.md.
 - **Always tooling-generated.** Created by init, synced by workflows. Never hand-edited.
-- **Backward compatible.** Workflows check for paul.json existence before syncing. Pre-v1.1 projects without paul.json are silently skipped.
+- **Backward compatible.** Workflows check for paul.json existence before syncing. Pre-v1.1 projects without paul.json are silently skipped. Legacy paul.json files without `id` are supported — BASE satellite detection falls back to name-based matching.
+- **Stable identity.** The `id` field (format: `sat_<8hex>`) is generated once and never changes. BASE uses it as the primary key for satellite registration, enabling safe folder moves and renames.
 - **Satellite config.** The `satellite` object is for consumer-side settings. BASE reads `satellite.groom` to decide whether to include this project in health checks.
 
 ---

@@ -410,7 +410,7 @@ Usage: `/paul:plan-fix`
 ---
 phase: 01-foundation
 plan: 01
-type: execute
+plan_type: execute
 autonomous: true
 ---
 

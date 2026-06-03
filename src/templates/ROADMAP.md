@@ -19,6 +19,12 @@ Template for `.paul/ROADMAP.md` — the project's phase structure.
 ## File Template (Initial v1.0)
 
 ```markdown
+---
+description: "[Project name] — milestone and phase structure"
+type: Roadmap
+about: "[project-name]"
+---
+
 # Roadmap: [Project Name]
 
 ## Overview

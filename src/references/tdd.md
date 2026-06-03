@@ -10,7 +10,7 @@ TDD is about design quality, not coverage metrics. The red-green-refactor cycle 
 
 ## When TDD Improves Quality
 
-**TDD candidates (create a TDD plan with `type: tdd`):**
+**TDD candidates (create a TDD plan with `plan_plan_type: tdd`):**
 - Business logic with defined inputs/outputs
 - API endpoints with request/response contracts
 - Data transformations, parsing, formatting
@@ -19,7 +19,7 @@ TDD is about design quality, not coverage metrics. The red-green-refactor cycle 
 - State machines and workflows
 - Utility functions with clear specifications
 
-**Skip TDD (use standard plan with `type: execute`):**
+**Skip TDD (use standard plan with `plan_type: execute`):**
 - UI layout, styling, visual components
 - Configuration changes
 - Glue code connecting existing components
@@ -43,7 +43,7 @@ Each TDD plan implements **one feature** through the full RED-GREEN-REFACTOR cyc
 ---
 phase: XX-name
 plan: NN
-type: tdd
+plan_type: tdd
 ---
 ```
 

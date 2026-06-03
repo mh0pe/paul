@@ -391,3 +391,6 @@ When a checkpoint fails, NEVER start patching immediately — instead classify t
 **Swallowing concerns:**
 NEVER report DONE when you have doubts — instead report DONE_WITH_CONCERNS with specific flags, because silently uncertain work produces false completion that fails during verification or in production.
 </anti_patterns>
+
+## Extensions
+<!-- Extensions are managed by integration installers. Do not edit manually. -->

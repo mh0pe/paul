@@ -40,7 +40,7 @@ Templates that define output documents show example frontmatter:
 ---
 phase: XX-name
 plan: NN
-type: execute
+plan_type: execute
 wave: 1
 depends_on: []
 files_modified: []

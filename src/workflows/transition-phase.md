@@ -67,6 +67,8 @@ cat .paul/phases/{current-phase}/*-SUMMARY.md
 
 **Assess and update PROJECT.md:**
 
+0. **Frontmatter:** If PROJECT.md has YAML frontmatter, update `description` if the project's core value statement has evolved during this phase. Preserve `type` and `about` fields unchanged.
+
 1. **Requirements validated?**
    - Any requirements shipped in this phase?
    - Move to Validated section: `- ✓ [Requirement] — Phase X`
@@ -366,3 +368,6 @@ What's next?
 - [ ] **STATE CONSISTENCY VERIFIED** (all three files aligned - BLOCKING)
 - [ ] User knows next steps with quick continuation
 </success_criteria>
+
+## Extensions
+<!-- Extensions are managed by integration installers. Do not edit manually. -->

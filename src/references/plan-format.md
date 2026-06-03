@@ -16,7 +16,7 @@ Every PLAN.md starts with YAML frontmatter:
 ---
 phase: XX-name
 plan: NN
-type: execute
+plan_type: execute
 wave: N
 depends_on: []
 files_modified: []
@@ -28,7 +28,7 @@ autonomous: true
 |-------|----------|---------|
 | `phase` | Yes | Phase identifier (e.g., `02-rules-layer`) |
 | `plan` | Yes | Plan number within phase (e.g., `01`, `02`) |
-| `type` | Yes | `execute` for standard, `tdd` for test-driven, `research` for exploration |
+| `plan_type` | Yes | `execute` for standard, `tdd` for test-driven, `research` for exploration |
 | `wave` | Yes | Execution wave number (pre-computed at plan time) |
 | `depends_on` | Yes | Array of plan IDs this plan requires |
 | `files_modified` | Yes | Files this plan touches (for conflict detection) |

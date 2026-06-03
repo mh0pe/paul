@@ -45,6 +45,9 @@ patterns-established:
 duration: Xmin
 started: YYYY-MM-DDTHH:MM:SSZ
 completed: YYYY-MM-DDTHH:MM:SSZ
+description: "[Substantive one-liner outcome]"
+type: Summary
+about: "[project-name]"
 ---
 
 # Phase [X] Plan [Y]: [Name] Summary

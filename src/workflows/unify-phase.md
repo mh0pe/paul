@@ -99,6 +99,9 @@ phase: NN-name
 plan: NN
 completed: ISO timestamp
 duration: Xmin
+description: "[One-liner: what changed]"
+type: Summary
+about: "[project-name]"
 ---
 
 # Phase [X] Plan [Y]: [Name] Summary
@@ -134,6 +137,9 @@ Include all standard sections:
    plan: NN
    completed: ISO timestamp
    duration: approximate time
+   description: "[Substantive one-liner outcome]"
+   type: Summary
+   about: "[project-name]"
    ---
    ```
 
@@ -181,12 +187,14 @@ Include all standard sections:
    ```
 2. If not found: skip silently (pre-v1.1 project)
 3. If found: read current paul.json and update:
+   - **If `id` is missing:** generate one (`sat_` + 8 random hex chars from UUID4) and add it. This backfills legacy projects automatically as users work in them.
    - `phase.number` → current phase number from STATE.md
    - `phase.name` → current phase name from STATE.md
    - `phase.status` → "complete" if phase done, "in_progress" if more plans remain
    - `loop.plan` → null (loop just closed)
    - `loop.position` → "IDLE"
    - `timestamps.updated_at` → current ISO timestamp
+   - **If `id` already exists: PRESERVE it — never modify or remove. It is the satellite's stable identity.**
 4. Write updated paul.json back
 </step>
 
@@ -288,3 +296,6 @@ Update ALL of: SUMMARY, STATE, ROADMAP (if phase done). Don't leave partial.
 **Forgetting loop position:**
 Always show the visual loop position in STATE.md.
 </anti_patterns>
+
+## Extensions
+<!-- Extensions are managed by integration installers. Do not edit manually. -->

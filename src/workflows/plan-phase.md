@@ -148,8 +148,11 @@ Generate compressed PLAN.md:
 ---
 phase: NN-name
 plan: NN
-type: execute
+plan_type: execute
 autonomous: true
+description: "[Goal one-liner]"
+type: Plan
+about: "[project-name]"
 ---
 
 <objective>
@@ -194,11 +197,14 @@ Generate full PLAN.md following template structure:
    **Frontmatter:**
    - phase: NN-name
    - plan: 01 (or next number if multiple plans in phase)
-   - type: execute (or tdd/research)
+   - plan_type: execute (or tdd/research)
    - wave: 1 (adjust if dependencies exist)
    - depends_on: [] (or prior plan IDs if genuine dependency)
    - files_modified: [list all files]
    - autonomous: true/false
+   - description: [Goal one-liner from objective section]
+   - type: Plan
+   - about: [project name from PROJECT.md]
 
    **Sections:**
    - <objective>: Goal, Purpose, Output
@@ -383,3 +389,6 @@ Example: `.paul/phases/04-workflows-layer/04-01-PLAN.md`
 - Warn user which prior phases must complete first — instead of silently proceeding, because building on incomplete foundations produces plans that can't execute
 - Do not create plan until dependencies satisfied
 </error_handling>
+
+## Extensions
+<!-- Extensions are managed by integration installers. Do not edit manually. -->

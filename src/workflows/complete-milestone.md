@@ -391,8 +391,10 @@ Git tag created: {version}
    ```
 2. If not found: skip silently (pre-v1.1 project)
 3. If found: read current paul.json and update:
+   - **If `id` is missing:** generate one (`sat_` + 8 random hex chars from UUID4) and add it. This backfills legacy projects automatically as users work in them.
    - `milestone.status` → "complete"
    - `timestamps.updated_at` → current ISO timestamp
+   - **If `id` already exists: PRESERVE it — never modify or remove. It is the satellite's stable identity.**
 4. Write updated paul.json back
 </step>
 

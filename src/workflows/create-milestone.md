@@ -184,7 +184,9 @@ Update STATE.md:
    - `phase.status` → "not_started"
    - `loop.plan` → null
    - `loop.position` → "IDLE"
+   - **If `id` is missing:** generate one (`sat_` + 8 random hex chars from UUID4) and add it. This backfills legacy projects automatically as users work in them.
    - `timestamps.updated_at` → current ISO timestamp
+   - **If `id` already exists: PRESERVE it — never modify or remove. It is the satellite's stable identity.**
 4. Write updated paul.json back
 </step>
 

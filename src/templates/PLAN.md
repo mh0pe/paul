@@ -12,11 +12,14 @@ Template for `.paul/phases/{phase-number}-{name}/{phase}-{plan}-PLAN.md` - execu
 ---
 phase: XX-name
 plan: NN
-type: execute                    # execute | tdd | research
+plan_type: execute               # execute | tdd | research
 wave: N                          # Execution wave (1, 2, 3...). Pre-computed at plan time.
 depends_on: []                   # Plan IDs this plan requires (e.g., ["01-01"]).
 files_modified: []               # Files this plan modifies.
 autonomous: true                 # false if plan has checkpoints requiring user interaction
+description: "[Goal one-liner from objective]"
+type: Plan                       # index pipeline entity type
+about: "[project-name]"
 ---
 
 <objective>
@@ -187,7 +190,7 @@ After completion, create `.paul/phases/XX-name/{phase}-{plan}-SUMMARY.md`
 |-------|----------|---------|
 | `phase` | Yes | Phase identifier (e.g., `01-foundation`) |
 | `plan` | Yes | Plan number within phase (e.g., `01`, `02`) |
-| `type` | Yes | `execute` for standard, `tdd` for test-driven, `research` for exploration |
+| `plan_type` | Yes | `execute` for standard, `tdd` for test-driven, `research` for exploration |
 | `wave` | Yes | Execution wave number (1, 2, 3...). Pre-computed at plan time. |
 | `depends_on` | Yes | Array of plan IDs this plan requires. Empty = parallel candidate. |
 | `files_modified` | Yes | Files this plan touches. For conflict detection. |

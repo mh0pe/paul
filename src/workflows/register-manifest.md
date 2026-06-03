@@ -51,10 +51,13 @@ Extract from STATE.md (best-effort — use defaults if not found):
 </step>
 
 <step name="create_paul_json">
+Generate a satellite ID: `sat_` + 8 random hex characters (from UUID4, e.g., `sat_3f8a1c2e`). This ID is permanent — it survives moves, renames, and folder restructures. BASE satellite detection uses it as the primary key.
+
 Generate `.paul/paul.json` using extracted values:
 
 ```json
 {
+  "id": "[generated sat_xxxxxxxx]",
   "name": "[project_name]",
   "version": "[milestone_version]",
   "milestone": {

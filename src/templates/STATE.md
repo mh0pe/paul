@@ -9,6 +9,12 @@ Template for `.paul/STATE.md` — the project's living memory.
 ## File Template
 
 ```markdown
+---
+description: "[Project name] — current position and accumulated context"
+type: ProjectState
+about: "[project-name]"
+---
+
 # Project State
 
 ## Project Reference

@@ -9,6 +9,12 @@ Template for `.paul/PROJECT.md` — the project's business context and requireme
 ## File Template
 
 ```markdown
+---
+description: "[Core Value one-liner from init]"
+type: Project
+about: "[project-name]"
+---
+
 # [Project Name]
 
 ## What This Is

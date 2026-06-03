@@ -239,3 +239,6 @@ Use AskUserQuestion:
 - [ ] Summary presented with verdict
 - [ ] User knows next steps based on results
 </success_criteria>
+
+## Extensions
+<!-- Extensions are managed by integration installers. Do not edit manually. -->
