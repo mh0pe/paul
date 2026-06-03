@@ -1,14 +1,17 @@
 ---
 name: paul:register
-description: Generate paul.json for an existing PAUL project that predates v1.1 satellite manifest support
+description: Migrate paul.json → paul.toml, or create paul.toml for projects missing a manifest
 argument-hint:
 allowed-tools: [Read, Write, Bash]
 ---
 
 <objective>
-Generate `.paul/paul.json` for an existing project that has a `.paul/` directory but no satellite manifest.
+Migrate `.paul/paul.json` → `.paul/paul.toml` for pre-v1.4 projects, or create `.paul/paul.toml` from STATE.md for projects that have a `.paul/` directory but no manifest at all.
 
-**When to use:** Projects initialized before paul-framework v1.1 that are missing `paul.json`. Required for BASE satellite auto-detection to discover and register the project.
+**When to use:**
+- Projects initialized before v1.4 that still have paul.json (auto-migration also happens on any workflow contact)
+- Projects with `.paul/` but no manifest file (paul.json or paul.toml)
+- After upgrading PAUL framework to v1.4+ to explicitly migrate existing projects
 </objective>
 
 <execution_context>
@@ -16,7 +19,7 @@ Generate `.paul/paul.json` for an existing project that has a `.paul/` directory
 </execution_context>
 
 <context>
-Current directory (check for .paul/ and existing paul.json)
+Current directory (check for .paul/, existing paul.json, existing paul.toml)
 </context>
 
 <process>
@@ -24,6 +27,9 @@ Follow workflow: @~/.claude/paul-framework/workflows/register-manifest.md
 </process>
 
 <success_criteria>
-- [ ] .paul/paul.json created with correct project name and current state
-- [ ] User confirmed BASE will detect the project on next session start
+- [ ] .paul/paul.toml created with correct project state and [paul] provenance section
+- [ ] .paul/paul.json deleted (if it existed)
+- [ ] .paul/ledger.toml created (if missing)
+- [ ] BASE v2 detection check performed
+- [ ] User informed of next steps
 </success_criteria>
