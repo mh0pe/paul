@@ -18,7 +18,7 @@ npx paul-framework
 
 <br>
 
-![PAUL Install](assets/terminal.svg)
+![PAUL Install](assets/terminal.png)
 
 <br>
 
@@ -252,6 +252,9 @@ PAUL provides 26 commands organized by purpose. Run `/paul:help` for the complet
 ├── PROJECT.md           # Project context and requirements
 ├── ROADMAP.md           # Phase breakdown and milestones
 ├── STATE.md             # Loop position and session state
+├── paul.toml            # Machine-readable manifest (BASE-v2 graph integration)
+├── ledger.toml          # Session history (cost/time attribution)
+├── MILESTONES.md        # Completed milestone log
 ├── config.md            # Optional integrations
 ├── SPECIAL-FLOWS.md     # Optional skill requirements
 └── phases/
@@ -318,29 +321,22 @@ Then [outcome]
 
 Every task has: files, action, verify, done. If you can't specify all four, the task is too vague.
 
-### CARL Integration
+### BASE v2 integration
 
-PAUL has a companion: **[CARL](https://github.com/ChristopherKahler/carl-core)** (Context Augmentation & Reinforcement Layer).
+PAUL works standalone. But paired with **BASE v2** (the proactive context engine), PAUL projects become nodes in a knowledge graph that surfaces the right context at the right time.
 
-CARL is a dynamic rule injection system. Instead of bloating your context with static prompts, CARL loads rules just-in-time based on what you're doing:
+When BASE v2 is installed, here's what happens automatically:
 
-| Trigger | Rules Loaded |
-|---------|--------------|
-| Working in `.paul/` directory | PAUL domain activates |
-| Writing code | DEVELOPMENT rules load |
-| Managing projects | PROJECTS rules load |
+- **Session start** - BASE scans all workspaces for `.paul/paul.toml` files and ingests project state into the graph
+- **Domain matching** - your project tags connect to BASE domains, so typing "work on casegate" triggers the right rules without you configuring anything
+- **Cost attribution** - BASE timestamp-matches your `.paul/ledger.toml` entries against Claude Code session data to show you exactly how much each project, phase, and plan costs in tokens
+- **Rule injection** - PAUL-specific rules (loop enforcement, boundary protection, verification requirements) load when you're in a PAUL project and disappear when you're not
 
-**PAUL-specific rules CARL enforces:**
-- Loop enforcement (PLAN → APPLY → UNIFY — no shortcuts)
-- Boundary protection (DO NOT CHANGE sections are real)
-- State consistency checks at phase transitions
-- Verification requirements for every task
-- Skill blocking (required skills must load before APPLY)
+Without BASE, PAUL still tracks state, enforces the loop, and manages your plans. With BASE, that state becomes queryable, connected, and visible across your entire workspace.
 
-The PAUL domain contains 14 rules that govern structured AI development. They load when you're in a PAUL project, disappear when you're not. Your context stays lean.
+BASE v2 is a Rust single binary. No MCP server, no wrapper scripts, near-zero standing context cost. `base hook session-start` reads stdin, writes stdout, done.
 
-**Without CARL:** You'd need massive static prompts in every session.
-**With CARL:** Rules activate when relevant, disappear when not.
+**Get BASE v2:** [https://chrisai.cv/skool](https://chrisai.cv/skool)
 
 ---
 
@@ -439,29 +435,29 @@ PLAN ──▶ APPLY ──▶ UNIFY
 
 ## Configuration
 
-### Optional Integrations
+### paul.toml (v1.4+)
+
+Every PAUL project generates a `.paul/paul.toml` manifest that BASE v2 reads for graph integration. It tracks project state, milestone progress, loop position, and framework provenance. Workflows update it automatically on every state change. You never edit it by hand.
+
+Alongside it, `.paul/ledger.toml` records a timestamped entry for every PAUL action (plan, apply, unify, etc.) so BASE can attribute token costs to specific projects and phases.
+
+If your project has an older `paul.json`, any PAUL workflow will auto-migrate it to `paul.toml` on contact. No manual steps needed.
+
+### Tags and BASE domains
+
+During `/paul:init`, if BASE v2 is detected, PAUL reads your `domains.toml` and offers domain-based tags. Tags in `paul.toml` become `hasDomain` edges in the graph, meaning BASE automatically injects the right context rules when you work on that project.
+
+### Optional integrations
 
 PAUL supports modular integrations configured in `.paul/config.md`:
 
 | Integration | Purpose |
 |-------------|---------|
 | SonarQube | Code quality metrics and issues |
-| *Future* | Linting, CI/CD, test runners |
 
-### SPECIAL-FLOWS
+### Specialized flows
 
-For projects with specialized requirements, `.paul/SPECIAL-FLOWS.md` defines skills that must be loaded before execution:
-
-```markdown
-## Required Skills
-
-| Skill | Work Type | Priority |
-|-------|-----------|----------|
-| /frontend-design | UI components | required |
-| /revops-expert | Landing pages | required |
-```
-
-APPLY blocks until required skills are confirmed loaded.
+For projects with specialized requirements, `.paul/SPECIAL-FLOWS.md` defines skills that must be loaded before execution. APPLY blocks until required skills are confirmed loaded.
 
 ---
 
@@ -506,7 +502,7 @@ PAUL takes a different approach from GSD:
 | Criteria | Embedded in tasks | First-class AC section |
 | Rules | Static prompts | CARL dynamic loading |
 
-Same comprehensive coverage, different philosophy. PAUL prioritizes quality over speed-for-speed's-sake. See [PAUL-VS-GSD.md](PAUL-VS-GSD.md) for full comparison.
+Same coverage, different philosophy. PAUL prioritizes quality over speed-for-speed's-sake.
 
 ### vs. Traditional Planning
 
@@ -520,17 +516,19 @@ Same comprehensive coverage, different philosophy. PAUL prioritizes quality over
 
 ## Ecosystem
 
-PAUL is part of a broader Claude Code extension ecosystem:
+PAUL is part of the Agentic OS by Chris AI Systems. Each piece does one thing well, and they connect through the BASE v2 knowledge graph.
 
-| System | What It Does | Link |
-|--------|-------------|------|
-| **AEGIS** | Multi-agent codebase auditing — diagnosis + controlled evolution | [GitHub](https://github.com/ChristopherKahler/aegis) |
-| **BASE** | Builder's Automated State Engine — workspace lifecycle, health tracking, drift prevention | [GitHub](https://github.com/ChristopherKahler/base) |
-| **CARL** | Context Augmentation & Reinforcement Layer — dynamic rules loaded JIT by intent | [GitHub](https://github.com/ChristopherKahler/carl) |
-| **PAUL** | Project orchestration — Plan, Apply, Unify Loop | You are here |
-| **SEED** | Typed project incubator — guided ideation through graduation into buildable projects | [GitHub](https://github.com/ChristopherKahler/seed) |
-| **Skillsmith** | Skill builder — standardized syntax specs + guided workflows for Claude Code skills | [GitHub](https://github.com/ChristopherKahler/skillsmith) |
-| **CC Strategic AI** | Skool community — courses, community, live support | [Skool](https://chrisai.cv/skool) |
+| System | What it does |
+|--------|-------------|
+| **BASE v2** | Proactive context engine (Rust). Knowledge graph, domain matching, suppression layer, dashboard. The connective tissue. |
+| **PAUL** | Project orchestration. Plan, Apply, Unify Loop. You are here. |
+| **AEGIS** | Multi-agent codebase auditing. Diagnosis + controlled evolution. |
+| **SEED** | Typed project incubator. Guided ideation through graduation into buildable projects. |
+
+| Resource | Link |
+|----------|------|
+| Community + courses | [https://chrisai.cv/skool](https://chrisai.cv/skool) |
+| YouTube | [https://youtube.com/@chris-ai-systems](https://youtube.com/@chris-ai-systems) |
 
 ---
 
@@ -542,14 +540,20 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ## Author
 
-**Chris Kahler** — [Chris AI Systems](https://github.com/ChristopherKahler)
+**Chris Kahler** - [Chris AI Systems](https://chrisai.cv)
 
-Building tools for AI-assisted development.
+Builder and family man who ships systems and shares everything he learns along the way. Work should serve life, not consume it.
+
+- Community: [https://chrisai.cv/skool](https://chrisai.cv/skool)
+- YouTube: [https://youtube.com/@chris-ai-systems](https://youtube.com/@chris-ai-systems)
+- GitHub: [https://github.com/ChristopherKahler](https://github.com/ChristopherKahler)
 
 ---
 
 <div align="center">
 
-**Claude Code is powerful. PAUL makes it reliable.**
+**Claude Code is powerful. PAUL keeps it honest.**
+
+*PAUL Framework v1.4 · Chris AI Systems · [https://chrisai.cv/skool](https://chrisai.cv/skool) · [https://youtube.com/@chris-ai-systems](https://youtube.com/@chris-ai-systems)*
 
 </div>
