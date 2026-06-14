@@ -3,7 +3,8 @@
   "name": "paul",
   "description": "PAUL -- structured Plan-Apply-Unify development workflow, as a native plugin.",
   "owner": {
-    "name": "mh0pe"
+    "name": "ChristopherKahler",
+    "url": "https://github.com/ChristopherKahler"
   },
   "plugins": [
     {
