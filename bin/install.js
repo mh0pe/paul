@@ -156,9 +156,18 @@ function copyWithPathReplacement(srcDir, destDir, pathPrefix) {
 }
 
 /**
- * Recursively copy directory, rewriting paul-framework refs for skills-dir plugin.
- * Replaces @~/.claude/paul-framework/ with ${CLAUDE_PLUGIN_ROOT}/paul-framework/
- * Leaves @.paul/ and all other project-relative refs untouched.
+ * Recursively copy directory for the skills-dir plugin mode.
+ *
+ * Source files (post native-plugin migration) already carry
+ * ${CLAUDE_PLUGIN_ROOT}/ refs verbatim — that is the form the Claude Code
+ * plugin runtime substitutes at load time.  For skills-dir installs we must
+ * preserve those tokens exactly so the runtime can resolve them.
+ *
+ * @.paul/ project-state refs must also be left untouched (they are resolved
+ * relative to the workspace at runtime, not to the plugin root).
+ *
+ * Legacy @~/.claude/paul-framework/ refs (from pre-migration source) are
+ * rewritten to the ${CLAUDE_PLUGIN_ROOT} form for backwards compatibility.
  */
 function copyWithPluginRootReplacement(srcDir, destDir) {
   fs.mkdirSync(destDir, { recursive: true });
@@ -173,11 +182,13 @@ function copyWithPluginRootReplacement(srcDir, destDir) {
       copyWithPluginRootReplacement(srcPath, destPath);
     } else if (entry.name.endsWith('.md')) {
       let content = fs.readFileSync(srcPath, 'utf8');
-      // Rewrite only paul-framework refs; leave @.paul/ project-state refs intact
+      // Legacy fallback: rewrite old-style refs to plugin-root form.
+      // (No-op on files that already use ${CLAUDE_PLUGIN_ROOT}.)
       content = content.replace(
         /@~\/\.claude\/paul-framework\//g,
         '@${CLAUDE_PLUGIN_ROOT}/paul-framework/'
       );
+      // ${CLAUDE_PLUGIN_ROOT}/ and @.paul/ refs are left verbatim.
       fs.writeFileSync(destPath, content);
     } else {
       fs.copyFileSync(srcPath, destPath);
@@ -222,22 +233,31 @@ function installSkillsDir() {
   );
   console.log(`  ${green}✓${reset} Wrote .claude-plugin/plugin.json`);
 
-  // Copy commands
-  const commandsSrc = path.join(src, 'src', 'commands');
+  // Copy commands — prefer plugin-native layout (commands/), fall back to src/commands.
+  const commandsSrcNative = path.join(src, 'commands');
+  const commandsSrcLegacy = path.join(src, 'src', 'commands');
+  const commandsSrc = fs.existsSync(commandsSrcNative) ? commandsSrcNative : commandsSrcLegacy;
   const commandsDest = path.join(skillsDir, 'commands');
   copyWithPluginRootReplacement(commandsSrc, commandsDest);
   console.log(`  ${green}✓${reset} Installed commands/`);
 
-  // Copy paul-framework subdirs
+  // Copy paul-framework — prefer plugin-native layout (paul-framework/ tree),
+  // fall back to src/{templates,workflows,references,rules}.
   const frameworkDest = path.join(skillsDir, 'paul-framework');
-  fs.mkdirSync(frameworkDest, { recursive: true });
-
-  const srcDirs = ['templates', 'workflows', 'references', 'rules'];
-  for (const dir of srcDirs) {
-    const dirSrc = path.join(src, 'src', dir);
-    const dirDest = path.join(frameworkDest, dir);
-    if (fs.existsSync(dirSrc)) {
-      copyWithPluginRootReplacement(dirSrc, dirDest);
+  const frameworkSrcNative = path.join(src, 'paul-framework');
+  if (fs.existsSync(frameworkSrcNative)) {
+    // New layout: paul-framework/ is a single tree ready to copy.
+    copyWithPluginRootReplacement(frameworkSrcNative, frameworkDest);
+  } else {
+    // Legacy layout: individual subdirs under src/.
+    fs.mkdirSync(frameworkDest, { recursive: true });
+    const srcDirs = ['templates', 'workflows', 'references', 'rules'];
+    for (const dir of srcDirs) {
+      const dirSrc = path.join(src, 'src', dir);
+      const dirDest = path.join(frameworkDest, dir);
+      if (fs.existsSync(dirSrc)) {
+        copyWithPluginRootReplacement(dirSrc, dirDest);
+      }
     }
   }
   console.log(`  ${green}✓${reset} Installed paul-framework/`);
